@@ -1,0 +1,120 @@
+// Importamos las fuentes personalizadas
+@import "fonts";
+
+// Sobreescribimos las variables de Color
+$primary: hsl(180, 79%, 43%);
+$secondary: hsl(180, 76%, 24%);
+$tertiary: hsl(214, 87%, 26%);
+$success: hsl(90, 64%, 58%);
+$warning: hsl(62, 89%, 58%);
+$danger: hsl(0, 83%, 59%);
+$accent: hsl(39, 89%, 53%);
+
+// Sobreescribimos el color del Background y de las fuentes
+$body-bg: hsl(29, 29%, 96%); // Fondo de la web
+$body-color: hsl(0, 0%, 26%); // Color de texto por defecto
+
+// Light Color versions
+$primary-light: hsl(180, 62%, 64%);
+$secondary-light: hsl(180, 69%, 35%);
+$tertiary-light: hsl(214, 70%, 55%);
+$success-light: hsl(90, 63%, 65%);
+$warning-light: hsl(62, 82%, 69%);
+$danger-light: hsl(0, 82%, 68%);
+$accent-light: hsl(39, 86%, 60%);
+$body-bg-light: hsl(30, 27%, 99%);
+$body-color-light: hsl(0, 1%, 34%);
+
+// Dark Color versions
+$primary-dark: hsl(190, 84%, 36%);
+$secondary-dark: hsl(180, 80%, 21%);
+$tertiary-dark: hsl(214, 84%, 16%);
+$success-dark: hsl(90, 66%, 47%);
+$warning-dark: hsl(62, 91%, 46%);
+$danger-dark: hsl(0, 84%, 49%);
+$accent-dark: hsl(39, 92%, 46%);
+$body-bg-dark: hsl(30, 27%, 81%);
+$body-color-dark: hsl(0, 0%, 20%);
+
+// Sobreescribimos las fuentes
+$font-family-sans-serif: 'Outfit', system-ui, -apple-system, sans-serif;
+$headings-font-family: 'Jost', sans-serif;
+
+// Pesos de las fuentes
+$font-weight-normal: 400;
+$font-weight-semibold: 600;
+$font-weight-bold: 800;
+
+// Modal Universal
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050;
+}
+
+// Importar functions y variables de Bootstrap antes del merge
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/variables-dark";
+
+// Inyectamos nuestras variables en los mapas de Bootstrap
+$custom-colors: (
+    "tertiary": $tertiary,
+    "tertiary-light": $tertiary-light,
+    "tertiary-dark": $tertiary-dark,
+    "accent": $accent,
+    "accent-light": $accent-light,
+    "accent-dark": $accent-dark,
+    "primary-light": $primary-light,
+    "primary-dark": $primary-dark,
+    "secondary-light": $secondary-light,
+    "secondary-dark": $secondary-dark,
+    "success-light": $success-light,
+    "success-dark": $success-dark,
+    "warning-light": $warning-light,
+    "warning-dark": $warning-dark,
+    "danger-light": $danger-light,
+    "danger-dark": $danger-dark
+);
+
+$theme-colors: map-merge($theme-colors, $custom-colors);
+
+@import "bootstrap/scss/bootstrap";
+
+// Para que el botón accent se oscurezca y no se aclare al hacer hover
+.btn-accent {
+    --bs-btn-hover-bg: #{$accent-dark};
+    --bs-btn-hover-border-color: #{$accent-dark};
+    --bs-btn-active-bg: #{$accent-dark};
+    --bs-btn-active-border-color: #{$accent-dark};
+}
+
+// Para que el botón primary se oscurezca y no se aclare al hacer hover
+.btn-primary {
+    --bs-btn-hover-bg: #{$primary-dark};
+    --bs-btn-hover-border-color: #{$primary-dark};
+    --bs-btn-active-bg: #{$primary-dark};
+    --bs-btn-active-border-color: #{$primary-dark};
+}
+
+// Nuevas utilidades de degradados (bg-gradient-*)
+.bg-gradient-primary-secondary {
+    background: linear-gradient(90deg, $primary 0%, $secondary 100%) !important;
+}
+
+.bg-gradient-primary-tertiary {
+    background: linear-gradient(90deg, $primary 0%, $tertiary 100%) !important;
+}
+
+.bg-gradient-secondary-tertiary {
+    background: linear-gradient(90deg, $secondary 0%, $tertiary 100%) !important;
+}
+
+@import "bootstrap-icons/font/bootstrap-icons";

@@ -1,0 +1,33 @@
+// Declaramos localmente las variables necesarias para las reglas exclusivas del componente
+// Esto evita importar el núcleo de Bootstrap y superar el presupuesto de tamaño de Angular (budgets)
+$primary: hsl(180, 79%, 43%);
+$primary-light: hsl(180, 62%, 64%);
+$accent-light: hsl(39, 86%, 60%);
+$body-bg: hsl(29, 29%, 96%);
+
+// Fondo sólido personalizado
+.login-bg {
+  background-color: $body-bg;
+  padding: 1rem;
+}
+
+// Tarjeta personalizada sobre la base de Bootstrap .card
+.login-card {
+  width: 100%;
+  max-width: 440px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 20px !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+  }
+}
+
+// Ajustes finos para que los campos integrados reaccionen fluidamente
+.form-control:focus {
+  border-color: $primary;
+  box-shadow: 0 0 0 0.25rem rgba($primary, 0.15);
+}
