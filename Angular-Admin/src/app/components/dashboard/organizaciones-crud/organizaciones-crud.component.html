@@ -1,0 +1,128 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="h3 fw-bold text-secondary mb-0">Solicitudes de Organizaciones</h2>
+</div>
+
+@if (isLoading()) {
+  <div class="text-center py-5">
+    <div class="spinner-border text-primary" role="status"></div>
+  </div>
+} @else if (error()) {
+  <div class="alert alert-danger">{{ error() }}</div>
+} @else {
+  <div class="table-responsive shadow-sm rounded-3">
+    <table class="table table-hover table-striped mb-0 align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Organización</th>
+          <th>Email</th>
+          <th>Localidad</th>
+          <th>Estado</th>
+          <th class="text-end">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (org of organizaciones(); track org.idOrganizacion) {
+          <tr>
+            <td class="fw-bold text-muted">#{{ org.idOrganizacion }}</td>
+            <td>
+              <div class="fw-semibold text-dark">{{ org.nombreOrganizacion }}</div>
+              <div class="small text-muted text-truncate" style="max-width: 200px;">{{ org.descripcion }}</div>
+            </td>
+            <td>{{ org.email }}</td>
+            <td>{{ org.localidad || 'N/A' }}</td>
+            <td>
+              <span class="badge" [ngClass]="{
+                'bg-success-soft': org.estadoAprobacion === 'APROBADO',
+                'bg-warning-soft': org.estadoAprobacion === 'PENDIENTE',
+                'bg-danger-soft text-danger': org.estadoAprobacion === 'RECHAZADO'
+              }">
+                {{ org.estadoAprobacion }}
+              </span>
+            </td>
+            <td class="text-end">
+              <button class="btn btn-sm btn-outline-info me-2" (click)="openDetails(org)" title="Ver Detalles">
+                <i class="bi bi-eye-fill"></i>
+              </button>
+              @if (org.estadoAprobacion === 'PENDIENTE') {
+                <button class="btn btn-sm btn-success me-2" (click)="approveOrg(org.idOrganizacion)" title="Aprobar">
+                  <i class="bi bi-check-lg"></i>
+                </button>
+                <button class="btn btn-sm btn-warning me-2" (click)="rejectOrg(org.idOrganizacion)" title="Rechazar">
+                  <i class="bi bi-x-lg"></i>
+                </button>
+              }
+              <button class="btn btn-sm btn-outline-danger" (click)="deleteOrg(org.idOrganizacion)" title="Eliminar">
+                <i class="bi bi-trash3-fill"></i>
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="text-center py-4 text-muted">No hay solicitudes pendientes.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+<!-- Modal Detalles -->
+@if (showModal()) {
+  <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content shadow-lg border-0 rounded-4">
+        <div class="modal-header bg-primary text-white border-0 p-4">
+          <h5 class="modal-title fw-bold">Detalles de la Organización</h5>
+          <button type="button" class="btn-close btn-close-white" (click)="closeModal()"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div class="row g-4">
+            <div class="col-md-4 text-center">
+              <div class="p-3 bg-light rounded-4 mb-3 d-flex align-items-center justify-content-center" style="height: 150px;">
+                @if (selectedOrg()?.logo) {
+                  <img [src]="'/api/uploads/' + selectedOrg()?.logo" class="img-fluid rounded shadow-sm" alt="Logo">
+                } @else {
+                  <i class="bi bi-building fs-1 text-muted"></i>
+                }
+              </div>
+            </div>
+            <div class="col-md-8">
+              <h4 class="fw-bold text-dark mb-1">{{ selectedOrg()?.nombreOrganizacion }}</h4>
+              <p class="badge bg-primary-soft mb-3">{{ selectedOrg()?.estadoAprobacion }}</p>
+              
+              <div class="row g-3">
+                <div class="col-6">
+                  <label class="small text-uppercase fw-bold text-muted d-block">Email</label>
+                  <span class="text-dark">{{ selectedOrg()?.email }}</span>
+                </div>
+                <div class="col-6">
+                  <label class="small text-uppercase fw-bold text-muted d-block">Teléfono</label>
+                  <span class="text-dark">{{ selectedOrg()?.telefono }}</span>
+                </div>
+                <div class="col-6">
+                  <label class="small text-uppercase fw-bold text-muted d-block">Localidad</label>
+                  <span class="text-dark">{{ selectedOrg()?.localidad || 'N/A' }}</span>
+                </div>
+                <div class="col-6">
+                  <label class="small text-uppercase fw-bold text-muted d-block">Sitio Web</label>
+                  <a [href]="selectedOrg()?.sitioWeb" target="_blank" class="text-primary text-decoration-none">{{ selectedOrg()?.sitioWeb || 'N/A' }}</a>
+                </div>
+                <div class="col-12">
+                  <label class="small text-uppercase fw-bold text-muted d-block">Descripción</label>
+                  <p class="text-dark mb-0">{{ selectedOrg()?.descripcion }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-0 p-4 pt-0">
+          <button type="button" class="btn btn-light px-4" (click)="closeModal()">Cerrar</button>
+          @if (selectedOrg()?.estadoAprobacion === 'PENDIENTE') {
+            <button type="button" class="btn btn-success px-4" (click)="approveOrg(selectedOrg()!.idOrganizacion)">Aprobar Ahora</button>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+}

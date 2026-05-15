@@ -62,7 +62,6 @@ export class EventosCrudComponent {
       const updatedEvento = { ...evento, estadoEvento: 'CANCELADO' };
       this.eventoService.updateEvento(evento.idEvento, updatedEvento).subscribe({
         next: () => {
-          alert('Evento cancelado con éxito');
           this.loadEventos();
         },
         error: (err: any) => {

@@ -1,0 +1,31 @@
+.bg-success-soft { 
+  background-color: #e6f4ea; 
+  color: #198754;
+  border: 1px solid #c3e6cb;
+}
+.bg-warning-soft { 
+  background-color: #fff8e1; 
+  color: #f59e0b;
+  border: 1px solid #ffeeba;
+}
+.bg-danger-soft { 
+  background-color: #fce8e8; 
+  color: #dc3545;
+  border: 1px solid #f5c6cb;
+}
+.bg-primary-soft { 
+  background-color: #e7f1ff; 
+  color: #0d6efd;
+}
+
+.badge {
+  padding: 0.5em 1em;
+  font-weight: 600;
+}
+
+.card-img-wrapper {
+  transition: transform 0.3s ease;
+  &:hover {
+    transform: scale(1.05);
+  }
+}

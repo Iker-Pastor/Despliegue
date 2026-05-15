@@ -1,0 +1,85 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="h3 fw-bold text-secondary mb-0">Estadísticas del Sistema</h2>
+  <div class="text-muted small">Última actualización: {{ today | date:'medium' }}</div>
+</div>
+
+<div class="row g-4 mb-4">
+  <!-- Card Usuarios -->
+  <div class="col-md-4">
+    <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+      <div class="card-body p-4">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <div class="icon-shape bg-primary-soft">
+            <i class="bi bi-people-fill fs-3"></i>
+          </div>
+          <span class="badge bg-success-soft">+12% vs mes anterior</span>
+        </div>
+        <h3 class="h1 fw-bold mb-1 text-dark">{{ totalUsers() }}</h3>
+        <p class="text-secondary fw-medium mb-0">Usuarios Registrados</p>
+      </div>
+      <div class="progress rounded-0" style="height: 4px;">
+        <div class="progress-bar bg-primary" role="progressbar" style="width: 70%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card Eventos -->
+  <div class="col-md-4">
+    <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+      <div class="card-body p-4">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <div class="icon-shape bg-success-soft">
+            <i class="bi bi-calendar-check-fill fs-3"></i>
+          </div>
+          <span class="badge bg-info-soft">{{ stats()?.Eventos_Finalizados || 0 }} completados</span>
+        </div>
+        <h3 class="h1 fw-bold mb-1 text-dark">{{ totalEvents() }}</h3>
+        <p class="text-secondary fw-medium mb-0">Total de Eventos</p>
+      </div>
+      <div class="progress rounded-0" style="height: 4px;">
+        <div class="progress-bar bg-success" role="progressbar" style="width: 85%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card Basura -->
+  <div class="col-md-4">
+    <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+      <div class="card-body p-4">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <div class="icon-shape bg-warning-soft">
+            <i class="bi bi-trash-fill fs-3"></i>
+          </div>
+          <div class="text-end">
+            <span class="d-block fw-bold text-dark">Impacto Ecológico</span>
+            <span class="small text-secondary">Meta: 10,000kg</span>
+          </div>
+        </div>
+        <h3 class="h1 fw-bold mb-1 text-dark">{{ stats()?.Total_Basura || 0 }} <small class="h5 text-secondary">kg</small></h3>
+        <p class="text-secondary fw-medium mb-0">Basura Recolectada</p>
+      </div>
+      <div class="progress rounded-0" style="height: 4px;">
+        <div class="progress-bar bg-warning" role="progressbar" [style.width.%]="((stats()?.Total_Basura || 0) / 10000) * 100"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Graph Section -->
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+  <div class="card-header bg-transparent border-0 p-4">
+    <h5 class="fw-bold mb-0">Recogida de Basura Histórica</h5>
+    <p class="text-muted small mb-0">Evolución de kilogramos recolectados por fecha de evento</p>
+  </div>
+  <div class="card-body p-4 pt-0">
+    <div class="chart-container" style="position: relative; height:400px; width:100%">
+      <canvas #chartCanvas></canvas>
+    </div>
+  </div>
+</div>
+
+@if (isLoading()) {
+  <div class="text-center py-5">
+    <div class="spinner-border text-primary" role="status"></div>
+  </div>
+}

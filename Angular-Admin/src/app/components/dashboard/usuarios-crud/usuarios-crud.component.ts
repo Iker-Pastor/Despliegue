@@ -64,7 +64,6 @@ export class UsuariosCrudComponent {
       const updatedUser = { ...user, activo: false };
       this.usuarioService.updateUsuario(user.id, updatedUser).subscribe({
         next: () => {
-          alert('Usuario desactivado con éxito');
           this.loadUsuarios();
         },
         error: (err: any) => {

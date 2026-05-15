@@ -52,8 +52,8 @@
               <button class="btn btn-sm btn-outline-primary me-2" title="Editar" (click)="openEditModal(user)">
                 <i class="bi bi-pencil-fill"></i>
               </button>
-              <button class="btn btn-sm btn-outline-danger" title="Eliminar" (click)="deleteUsuario(user)" [disabled]="user.rol === 'ADMIN'">
-                <i class="bi bi-trash-fill"></i>
+              <button class="btn btn-sm btn-outline-danger" title="Desactivar" (click)="deleteUsuario(user)" [disabled]="user.rol === 'ADMIN'">
+                <i class="bi bi-person-x-fill"></i>
               </button>
             </td>
           </tr>
