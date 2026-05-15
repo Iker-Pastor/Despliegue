@@ -1,0 +1,66 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="h3 fw-bold text-secondary mb-0">Gestión de Noticias</h2>
+  <button class="btn btn-primary d-flex align-items-center gap-2">
+    <i class="bi bi-file-earmark-plus-fill"></i> Nueva Noticia
+  </button>
+</div>
+
+@if (isLoading()) {
+  <div class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+  </div>
+} @else if (error()) {
+  <div class="alert alert-danger" role="alert">
+    {{ error() }}
+  </div>
+} @else {
+  <div class="table-responsive shadow-sm rounded-3">
+    <table class="table table-hover table-striped mb-0 align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Título</th>
+          <th>Descripción Corta</th>
+          <th>Fecha Publicación</th>
+          <th>Estado</th>
+          <th class="text-end">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (noticia of noticias(); track noticia.idNoticia) {
+          <tr>
+            <td class="fw-bold text-muted">#{{ noticia.idNoticia }}</td>
+            <td class="fw-semibold">{{ noticia.titulo }}</td>
+            <td>
+              <span class="d-inline-block text-truncate" style="max-width: 200px;" title="{{ noticia.descripcion }}">
+                {{ noticia.descripcion }}
+              </span>
+            </td>
+            <td>{{ noticia.fechaPublicacion | date:'mediumDate' }}</td>
+            <td>
+              <span class="badge" [ngClass]="noticia.estadoAprobacionNoticia === 'APROBADO' ? 'bg-success' : 'bg-warning text-dark'">
+                {{ noticia.estadoAprobacionNoticia }}
+              </span>
+            </td>
+            <td class="text-end">
+              <button class="btn btn-sm btn-outline-primary me-2" title="Editar">
+                <i class="bi bi-pencil-fill"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger" title="Eliminar" (click)="deleteNoticia(noticia.idNoticia)">
+                <i class="bi bi-trash-fill"></i>
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="text-center py-4 text-muted">
+              No hay noticias registradas.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

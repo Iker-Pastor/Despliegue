@@ -1,0 +1,68 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="h3 fw-bold text-secondary mb-0">Gestión de Eventos</h2>
+  <button class="btn btn-primary d-flex align-items-center gap-2">
+    <i class="bi bi-calendar-plus-fill"></i> Nuevo Evento
+  </button>
+</div>
+
+@if (isLoading()) {
+  <div class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+  </div>
+} @else if (error()) {
+  <div class="alert alert-danger" role="alert">
+    {{ error() }}
+  </div>
+} @else {
+  <div class="table-responsive shadow-sm rounded-3">
+    <table class="table table-hover table-striped mb-0 align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Título</th>
+          <th>Ubicación</th>
+          <th>Fecha Inicio</th>
+          <th>Participantes</th>
+          <th>Estado</th>
+          <th class="text-end">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (evt of eventos(); track evt.idEvento) {
+          <tr>
+            <td class="fw-bold text-muted">#{{ evt.idEvento }}</td>
+            <td class="fw-semibold">{{ evt.titulo }}</td>
+            <td><i class="bi bi-geo-alt-fill text-accent me-1"></i> {{ evt.ubicacion }}</td>
+            <td>{{ evt.fechaInicio | date:'mediumDate' }}</td>
+            <td>
+              <span class="badge bg-light text-dark border">
+                <i class="bi bi-people-fill me-1"></i> {{ evt.participantes }}
+              </span>
+            </td>
+            <td>
+              <span class="badge" [ngClass]="evt.estadoEvento === 'APROBADO' ? 'bg-success' : 'bg-warning text-dark'">
+                {{ evt.estadoEvento }}
+              </span>
+            </td>
+            <td class="text-end">
+              <button class="btn btn-sm btn-outline-primary me-2" title="Editar">
+                <i class="bi bi-pencil-fill"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger" title="Eliminar" (click)="deleteEvento(evt.idEvento)">
+                <i class="bi bi-trash-fill"></i>
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="7" class="text-center py-4 text-muted">
+              No hay eventos registrados.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

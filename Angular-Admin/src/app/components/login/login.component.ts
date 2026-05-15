@@ -49,7 +49,7 @@ export class LoginComponent {
         
         // Simular redirección o transición fluida
         setTimeout(() => {
-          this.router.navigate(['/']); // Redirigir a la vista principal tras el login exitoso
+          this.router.navigate(['/dashboard']); // Redirigir al dashboard tras el login exitoso
         }, 1500);
       },
       error: (err) => {

@@ -5,6 +5,16 @@ export const routes: Routes = [
     path: 'login', 
     loadComponent: () => import('./components/login/login.component').then(m => m.LoginComponent) 
   },
+  {
+    path: 'dashboard',
+    loadComponent: () => import('./components/dashboard/dashboard.component').then(m => m.DashboardComponent),
+    children: [
+      { path: 'usuarios', loadComponent: () => import('./components/dashboard/usuarios-crud/usuarios-crud.component').then(m => m.UsuariosCrudComponent) },
+      { path: 'eventos', loadComponent: () => import('./components/dashboard/eventos-crud/eventos-crud.component').then(m => m.EventosCrudComponent) },
+      { path: 'noticias', loadComponent: () => import('./components/dashboard/noticias-crud/noticias-crud.component').then(m => m.NoticiasCrudComponent) },
+      { path: '', redirectTo: 'usuarios', pathMatch: 'full' }
+    ]
+  },
   { 
     path: '', 
     redirectTo: 'login', 
