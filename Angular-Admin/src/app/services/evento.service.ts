@@ -5,11 +5,15 @@ import { Observable } from 'rxjs';
 export interface Evento {
   idEvento: number;
   titulo: string;
+  descripcion?: string;
+  imagen?: string;
   ubicacion: string;
   fechaInicio: string;
   fechaFin: string;
   estadoEvento: string;
   participantes: number;
+  finalizado?: boolean;
+  materialNecesario?: string;
 }
 
 @Injectable({
@@ -25,5 +29,19 @@ export class EventoService {
 
   deleteEvento(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`, { withCredentials: true });
+  }
+
+  createEvento(evento: any, imagen?: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('evento', new Blob([JSON.stringify(evento)], { type: 'application/json' }));
+    if (imagen) formData.append('imagen', imagen);
+    return this.http.post(this.apiUrl, formData, { withCredentials: true });
+  }
+
+  updateEvento(id: number, evento: any, imagen?: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('evento', new Blob([JSON.stringify(evento)], { type: 'application/json' }));
+    if (imagen) formData.append('imagen', imagen);
+    return this.http.put(`${this.apiUrl}/${id}`, formData, { withCredentials: true });
   }
 }

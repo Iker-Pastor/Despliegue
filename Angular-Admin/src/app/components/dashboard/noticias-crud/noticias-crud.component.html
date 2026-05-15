@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h2 class="h3 fw-bold text-secondary mb-0">Gestión de Noticias</h2>
-  <button class="btn btn-primary d-flex align-items-center gap-2">
+  <button class="btn btn-primary d-flex align-items-center gap-2" (click)="openAddModal()">
     <i class="bi bi-file-earmark-plus-fill"></i> Nueva Noticia
   </button>
 </div>
@@ -45,7 +45,7 @@
               </span>
             </td>
             <td class="text-end">
-              <button class="btn btn-sm btn-outline-primary me-2" title="Editar">
+              <button class="btn btn-sm btn-outline-primary me-2" title="Editar" (click)="openEditModal(noticia)">
                 <i class="bi bi-pencil-fill"></i>
               </button>
               <button class="btn btn-sm btn-outline-danger" title="Eliminar" (click)="deleteNoticia(noticia.idNoticia)">
@@ -62,5 +62,64 @@
         }
       </tbody>
     </table>
+  </div>
+}
+
+<!-- Modal de Noticia -->
+@if (showModal()) {
+  <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content shadow-lg border-0">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title fw-bold">
+            {{ isEditing() ? 'Editar Noticia' : 'Nueva Noticia' }}
+          </h5>
+          <button type="button" class="btn-close btn-close-white" (click)="closeModal()"></button>
+        </div>
+        <form [formGroup]="noticiaForm" (ngSubmit)="saveNoticia()">
+          <div class="modal-body p-4">
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label fw-semibold">Título</label>
+                <input type="text" class="form-control" formControlName="titulo">
+              </div>
+              <div class="col-12">
+                <label class="form-label fw-semibold">URL de la Imagen (o nombre del archivo)</label>
+                <input type="text" class="form-control" formControlName="imagen">
+              </div>
+              <div class="col-12">
+                <label class="form-label fw-semibold">Cita Destacada</label>
+                <input type="text" class="form-control" formControlName="citaDestacada">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Estado de Aprobación</label>
+                <select class="form-select" formControlName="estadoAprobacionNoticia">
+                  <option value="PENDIENTE">PENDIENTE</option>
+                  <option value="APROBADO">APROBADO</option>
+                  <option value="RECHAZADO">RECHAZADO</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Visible</label>
+                <select class="form-select" formControlName="estadoVisibilidad">
+                  <option [ngValue]="true">Sí</option>
+                  <option [ngValue]="false">No</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <label class="form-label fw-semibold">Descripción</label>
+                <textarea class="form-control" rows="4" formControlName="descripcion"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer border-0 p-4 pt-0">
+            <button type="button" class="btn btn-light px-4" (click)="closeModal()">Cancelar</button>
+            <button type="submit" class="btn btn-primary px-4" [disabled]="noticiaForm.invalid">
+              {{ isEditing() ? 'Actualizar' : 'Crear' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 }

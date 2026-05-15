@@ -6,8 +6,11 @@ export interface Noticia {
   idNoticia: number;
   titulo: string;
   descripcion: string;
+  imagen: string;
   estadoAprobacionNoticia: string;
   fechaPublicacion: string;
+  estadoVisibilidad: boolean;
+  citaDestacada?: string;
 }
 
 @Injectable({
@@ -23,5 +26,13 @@ export class NoticiaService {
 
   deleteNoticia(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`, { withCredentials: true });
+  }
+
+  createNoticia(noticia: any): Observable<any> {
+    return this.http.post(this.apiUrl, noticia, { withCredentials: true });
+  }
+
+  updateNoticia(noticia: any): Observable<any> {
+    return this.http.put(this.apiUrl, noticia, { withCredentials: true });
   }
 }

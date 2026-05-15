@@ -255,6 +255,9 @@ public class UsuarioController {
             if (userUpdate.getRol() != null) {
                 existingUser.setRol(userUpdate.getRol());
             }
+            if (userUpdate.getActivo() != null) {
+                existingUser.setActivo(userUpdate.getActivo());
+            }
 
             if (userUpdate.getPassword_hash() != null && !userUpdate.getPassword_hash().trim().isEmpty()) {
                 existingUser.setPassword_hash(passwordEncoder.encode(userUpdate.getPassword_hash()));
