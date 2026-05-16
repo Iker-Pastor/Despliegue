@@ -1,8 +1,0 @@
-/* Cambiar el color del sombreado del menú hamburguesa al hacer clic */
-.navbar-toggler:focus {
-    /* outline: none quita el borde negro duro */
-    outline: none; 
-    
-    /* box-shadow crea el aro difuminado usando la variable del color primario de Bootstrap */
-    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.3) !important; 
-}
