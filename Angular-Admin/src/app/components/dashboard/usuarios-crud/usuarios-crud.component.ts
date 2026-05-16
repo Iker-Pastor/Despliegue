@@ -2,6 +2,7 @@ import { Component, inject, signal, afterNextRender } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UsuarioService, Usuario } from '../../../services/usuario.service';
+import { AlertService } from '../../../services/alert.service';
 
 @Component({
   selector: 'app-usuarios-crud',
@@ -12,6 +13,7 @@ import { UsuarioService, Usuario } from '../../../services/usuario.service';
 })
 export class UsuariosCrudComponent {
   private readonly usuarioService = inject(UsuarioService);
+  private readonly alertService = inject(AlertService);
   private readonly fb = inject(FormBuilder);
   
   usuarios = signal<Usuario[]>([]);
@@ -56,22 +58,25 @@ export class UsuariosCrudComponent {
 
   deleteUsuario(user: Usuario) {
     if (user.rol === 'ADMIN') {
-      alert('No se pueden eliminar administradores');
+      this.alertService.error('Acción denegada', 'No se pueden eliminar administradores');
       return;
     }
 
-    if (confirm(`¿Estás seguro de desactivar al usuario ${user.nombre}?`)) {
-      const updatedUser = { ...user, activo: false };
-      this.usuarioService.updateUsuario(user.id, updatedUser).subscribe({
-        next: () => {
-          this.loadUsuarios();
-        },
-        error: (err: any) => {
-          console.error(err);
-          alert('Error al desactivar usuario');
-        }
-      });
-    }
+    this.alertService.confirm('Desactivar usuario', `¿Estás seguro de desactivar al usuario ${user.nombre}?`).then(confirmed => {
+      if (confirmed) {
+        const updatedUser = { ...user, activo: false };
+        this.usuarioService.updateUsuario(user.id, updatedUser).subscribe({
+          next: () => {
+            this.loadUsuarios();
+            this.alertService.success('Completado', 'Usuario desactivado correctamente');
+          },
+          error: (err: any) => {
+            console.error(err);
+            this.alertService.error('Error', 'Error al desactivar usuario');
+          }
+        });
+      }
+    });
   }
 
   openAddModal() {
@@ -118,8 +123,9 @@ export class UsuariosCrudComponent {
       next: () => {
         this.loadUsuarios();
         this.closeModal();
+        this.alertService.success('Guardado', 'Usuario guardado correctamente');
       },
-      error: (err: any) => alert(err.error?.error || 'Error al guardar usuario')
+      error: (err: any) => this.alertService.error('Error', err.error?.error || 'Error al guardar usuario')
     });
   }
 }

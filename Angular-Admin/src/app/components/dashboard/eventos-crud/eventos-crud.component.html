@@ -47,6 +47,9 @@
               </span>
             </td>
             <td class="text-end">
+              <button class="btn btn-sm btn-outline-info me-2" title="Asistencia" (click)="openParticipantsModal(evt.idEvento)">
+                <i class="bi bi-person-check-fill"></i>
+              </button>
               <button class="btn btn-sm btn-outline-primary me-2" title="Editar" (click)="openEditModal(evt)">
                 <i class="bi bi-pencil-fill"></i>
               </button>
@@ -129,6 +132,67 @@
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal Participantes (Check-in) -->
+@if (showParticipantsModal()) {
+  <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content shadow-lg border-0">
+        <div class="modal-header bg-info text-white">
+          <h5 class="modal-title fw-bold">Gestión de Asistencia</h5>
+          <button type="button" class="btn-close btn-close-white" (click)="closeParticipantsModal()"></button>
+        </div>
+        <div class="modal-body p-4">
+          @if (isLoadingParticipants()) {
+            <div class="text-center py-5">
+              <div class="spinner-border text-info" role="status"></div>
+            </div>
+          } @else {
+            <div class="table-responsive">
+              <table class="table table-hover align-middle">
+                <thead>
+                  <tr>
+                    <th>Usuario</th>
+                    <th>Email</th>
+                    <th class="text-center">Asistió</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (p of participants(); track p.id) {
+                    <tr>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <img [src]="p.foto ? 'uploads/' + p.foto : 'assets/img/profile/profile-placeholder.webp'" 
+                               class="rounded-circle me-2" width="32" height="32" style="object-fit: cover;">
+                          <span class="fw-medium">{{ p.nombre }} {{ p.apellido }}</span>
+                        </div>
+                      </td>
+                      <td class="small text-muted">{{ p.email }}</td>
+                      <td class="text-center">
+                        <div class="form-check form-switch d-inline-block">
+                          <input class="form-check-input" type="checkbox" 
+                                 [checked]="p.asistio" 
+                                 (change)="toggleCheckIn(p.id, p.asistio || false)">
+                        </div>
+                      </td>
+                    </tr>
+                  } @empty {
+                    <tr>
+                      <td colspan="3" class="text-center py-4 text-muted">No hay usuarios inscritos.</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+        <div class="modal-footer border-0 p-4 pt-0">
+          <button type="button" class="btn btn-light px-4" (click)="closeParticipantsModal()">Cerrar</button>
+        </div>
       </div>
     </div>
   </div>

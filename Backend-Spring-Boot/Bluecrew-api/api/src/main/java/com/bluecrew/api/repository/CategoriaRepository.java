@@ -17,4 +17,11 @@ public interface CategoriaRepository extends JpaRepository<Categoria, Integer> {
     @Query(value = "SELECT COUNT(*) as num_categorias FROM categorias", nativeQuery = true)
     Long countSql();
 
+    @Query(value = "SELECT c.nombre_categoria, COUNT(e.id_evento) as total_eventos " +
+                   "FROM categorias c " +
+                   "LEFT JOIN eventos e ON c.id_categoria = e.id_categoria " +
+                   "GROUP BY c.id_categoria, c.nombre_categoria " +
+                   "ORDER BY total_eventos DESC", nativeQuery = true)
+    List<Object[]> findSqlPopularidadCategorias();
+
 }

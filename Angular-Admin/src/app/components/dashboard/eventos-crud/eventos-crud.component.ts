@@ -2,6 +2,8 @@ import { Component, inject, signal, afterNextRender } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EventoService, Evento } from '../../../services/evento.service';
+import { InscripcionesService, Participante } from '../../../services/inscripciones.service';
+import { AlertService } from '../../../services/alert.service';
 
 @Component({
   selector: 'app-eventos-crud',
@@ -13,6 +15,8 @@ import { EventoService, Evento } from '../../../services/evento.service';
 })
 export class EventosCrudComponent {
   private readonly eventoService = inject(EventoService);
+  private readonly inscripcionesService = inject(InscripcionesService);
+  private readonly alertService = inject(AlertService);
   private readonly fb = inject(FormBuilder);
   
   eventos = signal<Evento[]>([]);
@@ -25,6 +29,12 @@ export class EventosCrudComponent {
   selectedEvento: Evento | null = null;
   eventoForm: FormGroup;
   selectedFile: File | null = null;
+
+  // Participants Modal
+  showParticipantsModal = signal<boolean>(false);
+  participants = signal<Participante[]>([]);
+  isLoadingParticipants = signal<boolean>(false);
+  currentEventoId: number | null = null;
 
   constructor() {
     this.eventoForm = this.fb.group({
@@ -57,19 +67,60 @@ export class EventosCrudComponent {
     });
   }
 
+  // Participants Logic
+  openParticipantsModal(id: number) {
+    this.currentEventoId = id;
+    this.showParticipantsModal.set(true);
+    this.loadParticipants(id);
+  }
+
+  loadParticipants(id: number) {
+    this.isLoadingParticipants.set(true);
+    this.inscripcionesService.getParticipantes(id).subscribe({
+      next: (data) => {
+        this.participants.set(data);
+        this.isLoadingParticipants.set(false);
+      },
+      error: (err) => {
+        console.error(err);
+        this.isLoadingParticipants.set(false);
+      }
+    });
+  }
+
+  toggleCheckIn(idUsuario: number, currentStatus: boolean) {
+    if (!this.currentEventoId) return;
+    
+    this.inscripcionesService.updateAsistencia(this.currentEventoId, idUsuario, !currentStatus).subscribe({
+      next: () => {
+        this.loadParticipants(this.currentEventoId!);
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
+  closeParticipantsModal() {
+    this.showParticipantsModal.set(false);
+    this.participants.set([]);
+    this.currentEventoId = null;
+  }
+
   cancelarEvento(evento: Evento) {
-    if (confirm(`¿Estás seguro de cancelar el evento "${evento.titulo}"?`)) {
-      const updatedEvento = { ...evento, estadoEvento: 'CANCELADO' };
-      this.eventoService.updateEvento(evento.idEvento, updatedEvento).subscribe({
-        next: () => {
-          this.loadEventos();
-        },
-        error: (err: any) => {
-          console.error(err);
-          alert('Error al cancelar evento');
-        }
-      });
-    }
+    this.alertService.confirm('Cancelar evento', `¿Estás seguro de cancelar el evento "${evento.titulo}"?`).then(confirmed => {
+      if (confirmed) {
+        const updatedEvento = { ...evento, estadoEvento: 'CANCELADO' };
+        this.eventoService.updateEvento(evento.idEvento, updatedEvento).subscribe({
+          next: () => {
+            this.loadEventos();
+            this.alertService.success('Completado', 'Evento cancelado correctamente');
+          },
+          error: (err: any) => {
+            console.error(err);
+            this.alertService.error('Error', 'Error al cancelar evento');
+          }
+        });
+      }
+    });
   }
 
   openAddModal() {
@@ -128,10 +179,11 @@ export class EventosCrudComponent {
       next: () => {
         this.loadEventos();
         this.closeModal();
+        this.alertService.success('Guardado', 'Evento guardado correctamente');
       },
       error: (err: any) => {
         console.error(err);
-        alert(err.error?.error || 'Error al guardar evento. Asegúrate de que las fechas y campos obligatorios son correctos.');
+        this.alertService.error('Error', err.error?.error || 'Error al guardar evento. Asegúrate de que las fechas y campos obligatorios son correctos.');
       }
     });
   }

@@ -22,6 +22,7 @@ import java.io.IOException;
 import com.bluecrew.api.model.Rol;
 import com.bluecrew.api.model.Usuario;
 import com.bluecrew.api.service.UsuarioService;
+import com.bluecrew.api.service.LogService;
 
 @Tag(name = "Usuarios", description = "API para gestión de usuarios")
 @RestController
@@ -37,6 +38,9 @@ public class UsuarioController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private LogService logService;
 
     // ***************************************************************************
     // CONSULTAS
@@ -171,6 +175,9 @@ public class UsuarioController {
 
                 try {
                     Usuario objPost = usuarioService.save(usuario);
+                    
+                    logService.log("CREATE", "USUARIO", "ADMIN", "Se ha creado el usuario: " + usuario.getEmail());
+
                     Map<String, Object> map = new HashMap<>();
                     map.put("mensaje", "Usuario creado con éxito");
                     map.put("insertRealizado", objPost);
@@ -266,6 +273,8 @@ public class UsuarioController {
 
         Usuario usuPut = usuarioRepository.save(existingUser);
 
+        logService.log("UPDATE", "USUARIO", "ADMIN", "Se ha actualizado el usuario ID: " + id);
+
         Map<String, Object> map = new HashMap<>();
         map.put("mensaje", "Usuario actualizado con éxito");
         map.put("updatedUser", usuPut);
@@ -289,6 +298,8 @@ public class UsuarioController {
         }
 
         usuarioService.deleteById(id);
+
+        logService.log("DELETE", "USUARIO", "ADMIN", "Se ha eliminado el usuario ID: " + id);
 
         Map<String, Object> map = new HashMap<>();
         map.put("mensaje", "Usuario eliminado con éxito");

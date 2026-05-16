@@ -2,6 +2,7 @@ import { Component, inject, signal, afterNextRender } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NoticiaService, Noticia } from '../../../services/noticia.service';
+import { AlertService } from '../../../services/alert.service';
 
 @Component({
   selector: 'app-noticias-crud',
@@ -13,6 +14,7 @@ import { NoticiaService, Noticia } from '../../../services/noticia.service';
 })
 export class NoticiasCrudComponent {
   private readonly noticiaService = inject(NoticiaService);
+  private readonly alertService = inject(AlertService);
   private readonly fb = inject(FormBuilder);
   
   noticias = signal<Noticia[]>([]);
@@ -55,16 +57,21 @@ export class NoticiasCrudComponent {
   }
 
   deleteNoticia(id: number) {
-    if (confirm('¿Estás seguro de eliminar esta noticia?')) {
-      this.noticiaService.deleteNoticia(id).subscribe({
-        next: () => this.loadNoticias(),
-        error: (err: any) => {
-          console.error(err);
-          const msg = err.error?.error || err.error?.message || 'Error al eliminar noticia.';
-          alert(msg);
-        }
-      });
-    }
+    this.alertService.confirm('Eliminar noticia', '¿Estás seguro de eliminar esta noticia?').then(confirmed => {
+      if (confirmed) {
+        this.noticiaService.deleteNoticia(id).subscribe({
+          next: () => {
+            this.loadNoticias();
+            this.alertService.success('Eliminado', 'Noticia eliminada correctamente');
+          },
+          error: (err: any) => {
+            console.error(err);
+            const msg = err.error?.error || err.error?.message || 'Error al eliminar noticia.';
+            this.alertService.error('Error', msg);
+          }
+        });
+      }
+    });
   }
 
   openAddModal() {
@@ -111,10 +118,11 @@ export class NoticiasCrudComponent {
       next: () => {
         this.loadNoticias();
         this.closeModal();
+        this.alertService.success('Guardado', 'Noticia guardada correctamente');
       },
       error: (err: any) => {
         console.error(err);
-        alert(err.error?.error || 'Error al guardar noticia. Verifica los campos obligatorios.');
+        this.alertService.error('Error', err.error?.error || 'Error al guardar noticia. Verifica los campos obligatorios.');
       }
     });
   }

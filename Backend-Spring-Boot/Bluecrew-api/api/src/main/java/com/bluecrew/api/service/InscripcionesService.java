@@ -79,4 +79,13 @@ public class InscripcionesService {
             throw new RuntimeException("La inscripción no existe");
         }
     }
+
+    @Transactional
+    public Inscripciones updateAsistencia(Integer idEvento, Integer idUsuario, Boolean asistio) {
+        InscripcionId id = new InscripcionId(idEvento, idUsuario);
+        Inscripciones inscripcion = inscripcionesRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Inscripción no encontrada"));
+        inscripcion.setAsistio(asistio);
+        return inscripcionesRepository.save(inscripcion);
+    }
 }

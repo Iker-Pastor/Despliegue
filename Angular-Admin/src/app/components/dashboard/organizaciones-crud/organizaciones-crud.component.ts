@@ -2,6 +2,7 @@ import { Component, inject, signal, afterNextRender } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { OrganizacionService, Organizacion } from '../../../services/organizacion.service';
+import { AlertService } from '../../../services/alert.service';
 
 @Component({
   selector: 'app-organizaciones-crud',
@@ -12,6 +13,7 @@ import { OrganizacionService, Organizacion } from '../../../services/organizacio
 })
 export class OrganizacionesCrudComponent {
   private readonly orgService = inject(OrganizacionService);
+  private readonly alertService = inject(AlertService);
   private readonly fb = inject(FormBuilder);
   
   organizaciones = signal<Organizacion[]>([]);
@@ -54,36 +56,45 @@ export class OrganizacionesCrudComponent {
   }
 
   approveOrg(id: number) {
-    if (confirm('¿Estás seguro de aprobar esta organización?')) {
-      this.orgService.approveOrganizacion(id).subscribe({
-        next: () => {
-          this.loadOrganizaciones();
-        },
-        error: (err) => alert('Error al aprobar')
-      });
-    }
+    this.alertService.confirm('Aprobar organización', '¿Estás seguro de aprobar esta organización?', 'success').then(confirmed => {
+      if (confirmed) {
+        this.orgService.approveOrganizacion(id).subscribe({
+          next: () => {
+            this.loadOrganizaciones();
+            this.alertService.success('Aprobada', 'La organización ha sido aprobada.');
+          },
+          error: (err) => this.alertService.error('Error', 'Error al aprobar')
+        });
+      }
+    });
   }
 
   rejectOrg(id: number) {
-    if (confirm('¿Estás seguro de rechazar esta organización?')) {
-      this.orgService.rejectOrganizacion(id).subscribe({
-        next: () => {
-          this.loadOrganizaciones();
-        },
-        error: (err) => alert('Error al rechazar')
-      });
-    }
+    this.alertService.confirm('Rechazar organización', '¿Estás seguro de rechazar esta organización?', 'danger').then(confirmed => {
+      if (confirmed) {
+        this.orgService.rejectOrganizacion(id).subscribe({
+          next: () => {
+            this.loadOrganizaciones();
+            this.alertService.success('Rechazada', 'La organización ha sido rechazada.');
+          },
+          error: (err) => this.alertService.error('Error', 'Error al rechazar')
+        });
+      }
+    });
   }
 
   deleteOrg(id: number) {
-    if (confirm('¿Estás seguro de eliminar esta organización permanentemente?')) {
-      this.orgService.deleteOrganizacion(id).subscribe({
-        next: () => {
-          this.loadOrganizaciones();
-        },
-        error: (err) => alert('Error al eliminar')
-      });
-    }
+    this.alertService.confirm('Eliminar permanentemente', '¿Estás seguro de eliminar esta organización permanentemente?', 'danger').then(confirmed => {
+      if (confirmed) {
+        this.orgService.deleteOrganizacion(id).subscribe({
+          next: () => {
+            this.loadOrganizaciones();
+            this.alertService.success('Eliminada', 'La organización ha sido eliminada.');
+          },
+          error: (err) => this.alertService.error('Error', 'Error al eliminar')
+        });
+      }
+    });
   }
 
   openDetails(org: Organizacion) {

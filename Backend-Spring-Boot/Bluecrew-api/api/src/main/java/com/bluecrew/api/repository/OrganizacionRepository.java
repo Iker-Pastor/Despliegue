@@ -22,4 +22,11 @@ public interface OrganizacionRepository extends JpaRepository<Organizacion, Inte
 
     @Query(value = "SELECT * FROM ORGANIZACIONES WHERE email = :email", nativeQuery = true)
     Optional<Organizacion> findByEmail(@Param("email") String email);
+
+    @Query(value = "SELECT o.nombre_organizacion, COUNT(e.id_evento) as total_eventos " +
+                   "FROM organizaciones o " +
+                   "LEFT JOIN eventos e ON o.id_organizacion = e.id_organizacion " +
+                   "GROUP BY o.id_organizacion, o.nombre_organizacion " +
+                   "ORDER BY total_eventos DESC", nativeQuery = true)
+    List<Object[]> findSqlRankingByEventos();
 }

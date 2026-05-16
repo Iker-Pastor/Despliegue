@@ -40,4 +40,16 @@ export class EstadisticasService {
   getEventosCount(): Observable<{ count: number }> {
     return this.http.get<{ count: number }>(`${this.apiUrl}/eventos/count`, { withCredentials: true });
   }
+
+  getMensuales(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/estadisticas/mensuales`, { withCredentials: true });
+  }
+
+  getPopularidadCategorias(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/estadisticas/categorias/popularidad`, { withCredentials: true });
+  }
+
+  getRankingOrganizaciones(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/estadisticas/organizaciones/ranking`, { withCredentials: true });
+  }
 }

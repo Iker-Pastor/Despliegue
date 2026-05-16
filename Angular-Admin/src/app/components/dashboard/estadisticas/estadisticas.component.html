@@ -66,14 +66,60 @@
 </div>
 
 <!-- Graph Section -->
-<div class="card border-0 shadow-sm rounded-4 mb-4">
-  <div class="card-header bg-transparent border-0 p-4">
-    <h5 class="fw-bold mb-0">Recogida de Basura Histórica</h5>
-    <p class="text-muted small mb-0">Evolución de kilogramos recolectados por fecha de evento</p>
+<div class="row g-4 mb-4">
+  <div class="col-lg-8">
+    <div class="card border-0 shadow-sm rounded-4 h-100">
+      <div class="card-header bg-transparent border-0 p-4 pb-0">
+        <h5 class="fw-bold mb-0">Recogida de Basura Histórica</h5>
+        <p class="text-muted small mb-0">Evolución de kilogramos recolectados</p>
+      </div>
+      <div class="card-body p-4">
+        <div class="chart-container" style="position: relative; height:350px; width:100%">
+          <canvas #chartCanvas></canvas>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="card-body p-4 pt-0">
-    <div class="chart-container" style="position: relative; height:400px; width:100%">
-      <canvas #chartCanvas></canvas>
+  <div class="col-lg-4">
+    <div class="card border-0 shadow-sm rounded-4 h-100">
+      <div class="card-header bg-transparent border-0 p-4 pb-0">
+        <h5 class="fw-bold mb-0">Popularidad por Categoría</h5>
+        <p class="text-muted small mb-0">Eventos por tipo</p>
+      </div>
+      <div class="card-body p-4">
+        <div class="chart-container" style="position: relative; height:350px; width:100%">
+          <canvas #categoryChartCanvas></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-lg-6">
+    <div class="card border-0 shadow-sm rounded-4 h-100">
+      <div class="card-header bg-transparent border-0 p-4 pb-0">
+        <h5 class="fw-bold mb-0">Inscripciones Mensuales</h5>
+        <p class="text-muted small mb-0">Volumen de nuevos inscritos</p>
+      </div>
+      <div class="card-body p-4">
+        <div class="chart-container" style="position: relative; height:300px; width:100%">
+          <canvas #monthlyInscriptionsCanvas></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card border-0 shadow-sm rounded-4 h-100">
+      <div class="card-header bg-transparent border-0 p-4 pb-0">
+        <h5 class="fw-bold mb-0">Ranking de Organizaciones</h5>
+        <p class="text-muted small mb-0">Top ONGs por número de eventos</p>
+      </div>
+      <div class="card-body p-4">
+        <div class="chart-container" style="position: relative; height:300px; width:100%">
+          <canvas #orgRankingCanvas></canvas>
+        </div>
+      </div>
     </div>
   </div>
 </div>

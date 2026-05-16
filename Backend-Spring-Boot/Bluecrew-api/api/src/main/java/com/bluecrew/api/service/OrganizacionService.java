@@ -120,4 +120,9 @@ public class OrganizacionService {
     public Optional<Organizacion> findByEmail(String email) {
         return organizacionRepository.findByEmail(email);
     }
+
+    @Transactional(readOnly = true)
+    public List<Object[]> findRankingByEventos() {
+        return organizacionRepository.findSqlRankingByEventos();
+    }
 }

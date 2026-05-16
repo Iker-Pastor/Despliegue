@@ -17,6 +17,9 @@ export class EstadisticasComponent {
   private readonly statsService = inject(EstadisticasService);
   
   @ViewChild('chartCanvas') chartCanvas!: ElementRef;
+  @ViewChild('categoryChartCanvas') categoryChartCanvas!: ElementRef;
+  @ViewChild('monthlyInscriptionsCanvas') monthlyInscriptionsCanvas!: ElementRef;
+  @ViewChild('orgRankingCanvas') orgRankingCanvas!: ElementRef;
   
   today = new Date();
   stats = signal<GlobalStats | null>(null);
@@ -54,10 +57,27 @@ export class EstadisticasComponent {
     this.statsService.getRecoleccionHistory().subscribe({
       next: (history: any) => {
         this.renderChart(history);
+      },
+      error: (err: any) => console.error('Error recoleccion:', err)
+    });
+
+    this.statsService.getPopularidadCategorias().subscribe({
+      next: (data: any[]) => this.renderCategoryChart(data),
+      error: (err: any) => console.error('Error categories:', err)
+    });
+
+    this.statsService.getMensuales().subscribe({
+      next: (data: any[]) => this.renderMonthlyChart(data),
+      error: (err: any) => console.error('Error monthly:', err)
+    });
+
+    this.statsService.getRankingOrganizaciones().subscribe({
+      next: (data: any[]) => {
+        this.renderRankingChart(data);
         this.isLoading.set(false);
       },
       error: (err: any) => {
-        this.error.set('Error al cargar datos de recolección');
+        console.error('Error ranking:', err);
         this.isLoading.set(false);
       }
     });
@@ -125,6 +145,78 @@ export class EstadisticasComponent {
             }
           }
         }
+      }
+    });
+  }
+
+  renderCategoryChart(data: any[]) {
+    if (!this.categoryChartCanvas) return;
+    const labels = data.map(item => item[0]);
+    const values = data.map(item => item[1]);
+
+    new Chart(this.categoryChartCanvas.nativeElement, {
+      type: 'doughnut',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: values,
+          backgroundColor: ['#0d6efd', '#198754', '#ffc107', '#dc3545', '#6610f2', '#6f42c1', '#fd7e14']
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom' }
+        }
+      }
+    });
+  }
+
+  renderMonthlyChart(data: any[]) {
+    if (!this.monthlyInscriptionsCanvas) return;
+    const labels = data.map(item => item[0]).reverse(); // Date labels
+    const values = data.map(item => item[1]).reverse();
+
+    new Chart(this.monthlyInscriptionsCanvas.nativeElement, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Nuevas Inscripciones',
+          data: values,
+          backgroundColor: '#0d6efd'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+  }
+
+  renderRankingChart(data: any[]) {
+    if (!this.orgRankingCanvas) return;
+    const labels = data.map(item => item[0]);
+    const values = data.map(item => item[1]);
+
+    new Chart(this.orgRankingCanvas.nativeElement, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Eventos Creados',
+          data: values,
+          backgroundColor: '#ffc107',
+          indexAxis: 'y'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: 'y',
+        scales: { x: { beginAtZero: true } }
       }
     });
   }

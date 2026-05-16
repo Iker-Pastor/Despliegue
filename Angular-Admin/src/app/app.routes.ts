@@ -14,6 +14,7 @@ export const routes: Routes = [
       { path: 'noticias', loadComponent: () => import('./components/dashboard/noticias-crud/noticias-crud.component').then(m => m.NoticiasCrudComponent) },
       { path: 'estadisticas', loadComponent: () => import('./components/dashboard/estadisticas/estadisticas.component').then(m => m.EstadisticasComponent) },
       { path: 'organizaciones', loadComponent: () => import('./components/dashboard/organizaciones-crud/organizaciones-crud.component').then(m => m.OrganizacionesCrudComponent) },
+      { path: 'logs', loadComponent: () => import('./components/dashboard/audit-logs/audit-logs.component').then(m => m.AuditLogsComponent) },
       { path: '', redirectTo: 'usuarios', pathMatch: 'full' }
     ]
   },

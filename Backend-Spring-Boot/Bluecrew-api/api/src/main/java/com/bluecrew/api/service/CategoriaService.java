@@ -80,4 +80,9 @@ public class CategoriaService {
         }
         categoriaRepository.deleteById(id);
     }
+
+    @Transactional(readOnly = true)
+    public List<Object[]> findPopularidadCategorias() {
+        return categoriaRepository.findSqlPopularidadCategorias();
+    }
 }

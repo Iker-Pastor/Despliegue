@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import com.bluecrew.api.model.Evento;
 import com.bluecrew.api.service.EventoService;
+import com.bluecrew.api.service.LogService;
 
 @Tag(name = "Eventos", description = "API para gestión de eventos")
 @RestController
@@ -29,6 +30,9 @@ public class EventoController {
 
     @Autowired
     private EventoService eventoService;
+
+    @Autowired
+    private LogService logService;
 
     // ***************************************************************************
     // CONSULTAS
@@ -181,6 +185,9 @@ public class EventoController {
             }
 
             Evento objPost = eventoService.save(evento);
+
+            logService.log("CREATE", "EVENTO", "ADMIN", "Se ha creado el evento: " + evento.getTitulo());
+
             Map<String, Object> map = new HashMap<>();
             map.put("mensaje", "Evento creado con éxito");
             map.put("insertRealizado", objPost);
@@ -262,6 +269,8 @@ public class EventoController {
 
         Evento objPut = eventoService.save(existingEvento);
 
+        logService.log("UPDATE", "EVENTO", "ADMIN", "Se ha actualizado el evento ID: " + id);
+
         Map<String, Object> map = new HashMap<>();
         map.put("mensaje", "Evento actualizado con éxito");
         map.put("eventoActualizado", objPut);
@@ -284,6 +293,9 @@ public class EventoController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
         } else {
             eventoService.deleteById(id);
+
+            logService.log("DELETE", "EVENTO", "ADMIN", "Se ha eliminado el evento ID: " + id);
+
             Map<String, Object> map = new HashMap<>();
             map.put("mensaje", "Evento eliminado con éxito");
             map.put("deletedRealizado", existingObj);

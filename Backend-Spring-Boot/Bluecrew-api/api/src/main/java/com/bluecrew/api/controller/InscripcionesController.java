@@ -11,10 +11,12 @@ import com.bluecrew.api.model.Evento;
 import com.bluecrew.api.model.Inscripciones;
 import com.bluecrew.api.model.Usuario;
 import com.bluecrew.api.service.InscripcionesService;
+import com.bluecrew.api.service.LogService;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +36,9 @@ public class InscripcionesController {
 
     @Autowired
     private InscripcionesService inscripcionesService;
+
+    @Autowired
+    private LogService logService;
 
     @Operation(summary = "Obtener todas las inscripciones", description = "Retorna una lista completa de todas las inscripciones registradas")
     @GetMapping("/inscripciones")
@@ -110,6 +115,9 @@ public class InscripcionesController {
     public ResponseEntity<Inscripciones> crearInscripcion(@RequestBody Inscripciones inscripcion) {
         try {
             Inscripciones nuevaInscripcion = inscripcionesService.save(inscripcion);
+            
+            logService.log("CREATE", "INSCRIPCION", "SISTEMA", "Nueva inscripción al evento ID: " + inscripcion.getEvento().getIdEvento());
+
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevaInscripcion);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -127,7 +135,30 @@ public class InscripcionesController {
             @PathVariable Integer idUsuario) {
         try {
             inscripcionesService.delete(idEvento, idUsuario);
+
+            logService.log("DELETE", "INSCRIPCION", "SISTEMA", "Cancelada inscripción al evento ID: " + idEvento);
+
             return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @Operation(summary = "Actualizar asistencia (Check-in)", description = "Marca si un usuario asistió o no a un evento")
+    @PatchMapping("/inscripciones/evento/{idEvento}/usuario/{idUsuario}/check-in")
+    public ResponseEntity<Inscripciones> actualizarAsistencia(
+            @PathVariable Integer idEvento,
+            @PathVariable Integer idUsuario,
+            @RequestBody Boolean asistio) {
+        try {
+            Inscripciones updated = inscripcionesService.updateAsistencia(idEvento, idUsuario, asistio);
+            
+            String estado = asistio ? "ASISTIÓ" : "FALTÓ";
+            logService.log("UPDATE", "ASISTENCIA", "ADMIN", "Check-in: Usuario " + idUsuario + " en Evento " + idEvento + " marcado como " + estado);
+
+            return ResponseEntity.ok(updated);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (Exception e) {
