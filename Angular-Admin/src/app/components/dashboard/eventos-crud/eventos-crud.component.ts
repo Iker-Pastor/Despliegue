@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { EventoService, Evento } from '../../../services/evento.service';
 import { InscripcionesService, Participante } from '../../../services/inscripciones.service';
 import { AlertService } from '../../../services/alert.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-eventos-crud',
@@ -35,6 +36,7 @@ export class EventosCrudComponent {
   participants = signal<Participante[]>([]);
   isLoadingParticipants = signal<boolean>(false);
   currentEventoId: number | null = null;
+  currentEventoFinalizado = signal<boolean>(false);
 
   constructor() {
     this.eventoForm = this.fb.group({
@@ -68,17 +70,26 @@ export class EventosCrudComponent {
   }
 
   // Participants Logic
-  openParticipantsModal(id: number) {
-    this.currentEventoId = id;
+  openParticipantsModal(evento: Evento) {
+    this.currentEventoId = evento.idEvento;
+    this.currentEventoFinalizado.set(evento.finalizado || false);
     this.showParticipantsModal.set(true);
-    this.loadParticipants(id);
+    this.loadParticipants(evento.idEvento);
   }
 
   loadParticipants(id: number) {
     this.isLoadingParticipants.set(true);
-    this.inscripcionesService.getParticipantes(id).subscribe({
-      next: (data) => {
-        this.participants.set(data);
+    forkJoin({
+      participantes: this.inscripcionesService.getParticipantes(id),
+      asistentes: this.inscripcionesService.getAsistentes(id)
+    }).subscribe({
+      next: ({ participantes, asistentes }) => {
+        // Mapear la asistencia comparando si el participante está en la lista de asistentes confirmados
+        const mapped = participantes.map(p => {
+          p.asistio = asistentes.some(a => a.id === p.id);
+          return p;
+        });
+        this.participants.set(mapped);
         this.isLoadingParticipants.set(false);
       },
       error: (err) => {
@@ -89,7 +100,7 @@ export class EventosCrudComponent {
   }
 
   toggleCheckIn(idUsuario: number, currentStatus: boolean) {
-    if (!this.currentEventoId) return;
+    if (!this.currentEventoId || !this.currentEventoFinalizado()) return;
     
     this.inscripcionesService.updateAsistencia(this.currentEventoId, idUsuario, !currentStatus).subscribe({
       next: () => {
@@ -103,6 +114,7 @@ export class EventosCrudComponent {
     this.showParticipantsModal.set(false);
     this.participants.set([]);
     this.currentEventoId = null;
+    this.currentEventoFinalizado.set(false);
   }
 
   cancelarEvento(evento: Evento) {

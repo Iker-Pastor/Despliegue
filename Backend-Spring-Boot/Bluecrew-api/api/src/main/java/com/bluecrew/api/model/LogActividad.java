@@ -2,6 +2,7 @@ package com.bluecrew.api.model;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -43,6 +44,7 @@ public class LogActividad {
 
     @Column(name = "FECHA_LOG", nullable = false)
     @Schema(description = "Fecha y hora del registro")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime fecha = LocalDateTime.now();
 
     public LogActividad(String accion, String entidad, String usuario, String detalle) {

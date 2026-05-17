@@ -23,6 +23,11 @@ export class InscripcionesService {
     return this.http.get<Participante[]>(`/api/eventos/${idEvento}/inscripciones`, { withCredentials: true });
   }
 
+  getAsistentes(idEvento: number): Observable<Participante[]> {
+    // El backend usa /api/eventos/{id}/inscripciones/asistentes
+    return this.http.get<Participante[]>(`/api/eventos/${idEvento}/inscripciones/asistentes`, { withCredentials: true });
+  }
+
   updateAsistencia(idEvento: number, idUsuario: number, asistio: boolean): Observable<any> {
     return this.http.patch<any>(`${this.apiUrl}/evento/${idEvento}/usuario/${idUsuario}/check-in`, asistio, { withCredentials: true });
   }

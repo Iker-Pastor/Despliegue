@@ -5,39 +5,39 @@
       BlueCrew Admin
     </a>
     
-    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar" aria-controls="adminNavbar" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler border-0" type="button" (click)="toggleMenu()" [class.collapsed]="isMenuCollapsed()" aria-controls="adminNavbar" [aria-expanded]="!isMenuCollapsed()" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     
-    <div class="collapse navbar-collapse" id="adminNavbar">
+    <div class="collapse navbar-collapse" [class.show]="!isMenuCollapsed()" id="adminNavbar">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4 gap-2">
         <li class="nav-item">
-          <a class="nav-link rounded px-3" routerLink="/dashboard/usuarios" routerLinkActive="active bg-white text-primary fw-semibold">
+          <a class="nav-link rounded px-3" routerLink="/dashboard/usuarios" routerLinkActive="active bg-white text-primary fw-semibold" (click)="closeMenu()">
             <i class="bi bi-people-fill me-2"></i> Usuarios
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link rounded px-3" routerLink="/dashboard/eventos" routerLinkActive="active bg-white text-primary fw-semibold">
+          <a class="nav-link rounded px-3" routerLink="/dashboard/eventos" routerLinkActive="active bg-white text-primary fw-semibold" (click)="closeMenu()">
             <i class="bi bi-calendar-event-fill me-2"></i> Eventos
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link rounded px-3" routerLink="/dashboard/noticias" routerLinkActive="active bg-white text-primary fw-semibold">
+          <a class="nav-link rounded px-3" routerLink="/dashboard/noticias" routerLinkActive="active bg-white text-primary fw-semibold" (click)="closeMenu()">
             <i class="bi bi-newspaper me-2"></i> Noticias
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link rounded px-3" routerLink="/dashboard/organizaciones" routerLinkActive="active bg-white text-primary fw-semibold">
+          <a class="nav-link rounded px-3" routerLink="/dashboard/organizaciones" routerLinkActive="active bg-white text-primary fw-semibold" (click)="closeMenu()">
             <i class="bi bi-building-fill-check me-2"></i> Organizaciones
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link rounded px-3" routerLink="/dashboard/estadisticas" routerLinkActive="active bg-white text-primary fw-semibold">
+          <a class="nav-link rounded px-3" routerLink="/dashboard/estadisticas" routerLinkActive="active bg-white text-primary fw-semibold" (click)="closeMenu()">
             <i class="bi bi-bar-chart-line-fill me-2"></i> Estadísticas
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link rounded px-3" routerLink="/dashboard/logs" routerLinkActive="active bg-white text-primary fw-semibold">
+          <a class="nav-link rounded px-3" routerLink="/dashboard/logs" routerLinkActive="active bg-white text-primary fw-semibold" (click)="closeMenu()">
             <i class="bi bi-journal-text me-2"></i> Auditoría
           </a>
         </li>

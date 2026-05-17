@@ -1,6 +1,13 @@
 {
   "routes": {
     "/": {},
+    "/dashboard": {},
+    "/dashboard/estadisticas": {},
+    "/dashboard/eventos": {},
+    "/dashboard/logs": {},
+    "/dashboard/noticias": {},
+    "/dashboard/organizaciones": {},
+    "/dashboard/usuarios": {},
     "/login": {}
   }
 }
